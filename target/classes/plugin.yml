@@ -1,0 +1,12 @@
+name: ShadowAPI
+version: '1.0-SNAPSHOT'
+main: de.ShadowX202.shadowAPI.ShadowAPI
+api-version: '1.21'
+
+commands:
+  echo:
+    usage: /echo --message <string> --amount <int>
+    aliases:
+      - e
+  broadcast:
+    usage: /broadcast send --message <string>
