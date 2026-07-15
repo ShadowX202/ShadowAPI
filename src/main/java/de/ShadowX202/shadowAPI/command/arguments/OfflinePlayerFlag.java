@@ -2,40 +2,34 @@ package de.ShadowX202.shadowAPI.command.arguments;
 
 import de.ShadowX202.shadowAPI.command.exception.ParseArgumentException;
 import de.ShadowX202.shadowAPI.command.interfaces.argument.Flag;
-import org.bukkit.command.CommandSender;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class StringFlag implements Flag<String> {
+public class OfflinePlayerFlag implements Flag<OfflinePlayer> {
 
     private String name;
     private List<String> aliases;
     private boolean optional;
-    private String defaultValue;
 
-    public StringFlag(String name, String ...aliases) {
+    public OfflinePlayerFlag(String name, String ...aliases) {
         this.name = name;
         this.aliases = Arrays.asList(aliases);
         this.optional = false;
     }
 
-    public StringFlag setOptional(boolean optional) {
+    public OfflinePlayerFlag setOptional(boolean optional) {
         this.optional = optional;
-        return this;
-    }
-
-    public StringFlag setDefaultValue(String defaultValue) {
-        this.defaultValue = defaultValue;
         return this;
     }
 
     @Override
     public @NotNull List<String> getAliases() {
-        return this.aliases;
+        return List.of();
     }
 
     @Override
@@ -49,20 +43,16 @@ public class StringFlag implements Flag<String> {
     }
 
     @Override
-    public String parse(@Nullable List<String> args) throws ParseArgumentException {
-        if(args == null || args.size() == 0) {
-            return this.defaultValue;
+    public OfflinePlayer parse(@Nullable List<String> args) throws ParseArgumentException {
+        if(args == null){
+            throw new ParseArgumentException("No name provided");
         }
-        return String.join(" ", args);
+        return Bukkit.getOfflinePlayer(name);
     }
 
     @Override
     public List<String> tab(@Nullable List<String> args) {
-        if(args.size() == 0) return List.of();
-        String input = args.get(args.size() - 1);
-        if(input.isBlank()) {
-            return List.of();
-        }
-        return List.of(new String[]{input});
+        if(args.size() != 1) return List.of();
+        return Arrays.stream(Bukkit.getOfflinePlayers()).map(OfflinePlayer::getName).toList();
     }
 }

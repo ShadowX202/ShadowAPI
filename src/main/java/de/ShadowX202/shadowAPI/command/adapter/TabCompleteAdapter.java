@@ -30,14 +30,12 @@ public class TabCompleteAdapter implements TabCompleter {
         List<String> result = new ArrayList<>();
 
         String[] quoted = tabParser.mergeQuotedArguments(args, true);
-        List<Tabable> possible = tabParser.parseTab(command, args);
+        List<String> possible = tabParser.parseTab(command, args);
 
-        for(Tabable tabable : possible) {
-            for(String str: tabable.tab(args, quoted.length-1)){
-                String lowStr = str.toLowerCase();
-                if(quoted.length == 0 || lowStr.startsWith(quoted[quoted.length-1].toLowerCase()) || quoted[quoted.length-1].isBlank()) {
-                    result.add(lowStr);
-                }
+        for(String str : possible) {
+            String lowStr = str.toLowerCase();
+            if(quoted.length == 0 || lowStr.startsWith(quoted[quoted.length-1].toLowerCase()) || quoted[quoted.length-1].isBlank()) {
+                result.add(lowStr);
             }
         }
 

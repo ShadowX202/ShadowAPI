@@ -2,7 +2,8 @@ package de.ShadowX202.shadowAPI.command.arguments;
 
 import de.ShadowX202.shadowAPI.command.exception.ParseArgumentException;
 import de.ShadowX202.shadowAPI.command.interfaces.argument.Flag;
-import org.bukkit.command.CommandSender;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -10,32 +11,32 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class StringFlag implements Flag<String> {
+public class OfflinePlayersFlag implements Flag<List<OfflinePlayer>> {
 
     private String name;
     private List<String> aliases;
     private boolean optional;
-    private String defaultValue;
+    private int max;
 
-    public StringFlag(String name, String ...aliases) {
+    public OfflinePlayersFlag(String name, String ...aliases) {
         this.name = name;
         this.aliases = Arrays.asList(aliases);
         this.optional = false;
     }
 
-    public StringFlag setOptional(boolean optional) {
+    public OfflinePlayersFlag setOptional(boolean optional) {
         this.optional = optional;
         return this;
     }
 
-    public StringFlag setDefaultValue(String defaultValue) {
-        this.defaultValue = defaultValue;
+    public OfflinePlayersFlag setMax(int max) {
+        this.max = max;
         return this;
     }
 
     @Override
     public @NotNull List<String> getAliases() {
-        return this.aliases;
+        return List.of();
     }
 
     @Override
@@ -49,20 +50,19 @@ public class StringFlag implements Flag<String> {
     }
 
     @Override
-    public String parse(@Nullable List<String> args) throws ParseArgumentException {
-        if(args == null || args.size() == 0) {
-            return this.defaultValue;
+    public List<OfflinePlayer> parse(@Nullable List<String> args) throws ParseArgumentException {
+        List<OfflinePlayer> offlinePlayers = new ArrayList<>();
+        for(String arg: args) {
+            offlinePlayers.add(Bukkit.getOfflinePlayer(arg));
         }
-        return String.join(" ", args);
+        if(max > 0 && max < offlinePlayers.size()) {
+            throw new ParseArgumentException("The maximum number of offline players is " + max);
+        }
+        return offlinePlayers;
     }
 
     @Override
     public List<String> tab(@Nullable List<String> args) {
-        if(args.size() == 0) return List.of();
-        String input = args.get(args.size() - 1);
-        if(input.isBlank()) {
-            return List.of();
-        }
-        return List.of(new String[]{input});
+        return Arrays.stream(Bukkit.getOfflinePlayers()).map(OfflinePlayer::getName).toList();
     }
 }

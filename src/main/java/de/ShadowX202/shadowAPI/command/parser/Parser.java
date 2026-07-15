@@ -11,22 +11,70 @@ import java.util.*;
 
 public class Parser {
 
-    private Flag findFlag(List<Flag> commandFlags, String string){
-        while(string.startsWith("-")){
-            string = string.substring(1);
+    public static class ArgumentValue {
+        private final Argument argument;
+        private final List<String> values;
+        private boolean used = true;
+        public ArgumentValue(Argument argument) {
+            this.argument = argument;
+            this.values = new ArrayList<>();
         }
-        for(Flag flag : commandFlags){
-            if(flag.getName().equalsIgnoreCase(string)){
-                return flag;
-            }
-            List<String> aliases = flag.getAliases();
-            for(String alias : aliases){
-                if(alias.equalsIgnoreCase(string)){
-                    return flag;
+
+        public ArgumentValue notUsed() {
+            this.used = false;
+            return this;
+        }
+        public ArgumentValue addValue(String value){
+            values.add(value);
+            return this;
+        }
+        public List<String> getValues() {
+            return values;
+        }
+        public boolean isUsed() {
+            return used;
+        }
+        public Argument getArgument() {
+            return argument;
+        }
+    }
+
+    public List<ArgumentValue> getArgumentValues(ShadowAPICommand command, String[] args){
+        List<ArgumentValue> values = new ArrayList<>();
+        ArgumentValue flag = null;
+
+        for(int i = 0; i < args.length; i++){
+            String arg = args[i];
+            Argument argument = null;
+
+            if(i < command.getArguments().size()){
+                argument = command.getArguments().get(i);
+                if(!(argument.isOptional() && arg.startsWith("-"))){
+                    values.add(new ArgumentValue(argument).addValue(arg));
+                    continue;
                 }
             }
+
+            if(arg.startsWith("-")){
+                for(Flag f: command.getFlags()){
+                    if(matchFlag(arg, f)){
+                        if(flag != null){
+                            values.add(flag);
+                        }
+                        flag = new ArgumentValue(f);
+                    }
+                }
+            }else if(flag != null){
+                flag.addValue(arg);
+            }
+
         }
-        return null;
+
+        if(flag != null){
+            values.add(flag);
+        }
+
+        return  values;
     }
 
     public String[] mergeQuotedArguments(String[] args) {
@@ -96,46 +144,50 @@ public class Parser {
     public Parsed parse(ShadowAPICommand command, String[] strings) throws MissingArgumentException, ParseArgumentException {
 
         Parsed out = new Parsed();
-
         String[] quoted = this.mergeQuotedArguments(strings);
 
-        for(ShadowAPICommand subCommand : command.getCommands() ) {
-            if(quoted.length >= 1 && matchCommand(quoted[0], subCommand)) {
-                out.addParsed(subCommand, parse(subCommand, Arrays.copyOfRange(quoted, 1, quoted.length)));
+        for(ShadowAPICommand subcommand : command.getCommands()) {
+            if(quoted.length > 0 && matchCommand(quoted[0], subcommand)) {
+                out.addParsed(subcommand, parse(subcommand, Arrays.copyOfRange(strings, 1, strings.length)));
                 return out;
             }
         }
 
-        int index = 0;
-        for (Argument argument : command.getArguments()) {
-            if (index >= quoted.length) {
-                if (argument.isOptional()){
-                    out.addArgument(argument, argument.parse(strings, null));
-                    continue;
-                }
-                throw new MissingArgumentException("Missing argument: "+ argument.getName());
-            }
-            out.addArgument(argument, argument.parse(quoted, index));
-            index++;
-        }
+        List<ArgumentValue> argumentValues = getArgumentValues(command, quoted);
 
-        for (Flag flag : command.getFlags()) {
-            boolean flagFound = false;
-            for (int i = index; i < quoted.length; i++) {
-                if(matchFlag(quoted[i], flag)){
-                    flagFound = true;
-                    Object obj = flag.parse(quoted, i+1);
-                    out.addFlag(flag, obj);
+        List<Argument> allArgs = new ArrayList<>();
+        allArgs.addAll(command.getArguments());
+        allArgs.addAll(command.getFlags());
+
+        for(Argument argument : allArgs) {
+            boolean argFound = false;
+            for(ArgumentValue argumentValue : argumentValues) {
+                if(argumentValue.getArgument() == argument) {
+                    argFound = true;
                     break;
                 }
             }
+            if(argFound) {
+                continue;
+            }
+            if(!argument.isOptional()) {
+                throw new MissingArgumentException("Missing argument: " + argument.getName());
+            }
+            argumentValues.add(new ArgumentValue(argument).notUsed());
+        }
 
-            if(!flagFound){
-                if(!flag.isOptional()){
-                    throw new ParseArgumentException("Missing flag: " + flag.getName());
-                }
-                out.addFlag(flag, flag.parse(strings, null));
-            };
+        for(ArgumentValue argumentValue : argumentValues) {
+            Argument argument = argumentValue.getArgument();
+            List<String> values = null;
+            if(argumentValue.isUsed()) {
+                values = argumentValue.getValues();
+            }
+
+            if(argument instanceof Flag) {
+                out.addFlag((Flag)argument, argument.parse(values) );
+                continue;
+            }
+            out.addArgument(argument, argument.parse(values) );
         }
 
         return out;

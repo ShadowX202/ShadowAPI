@@ -5,6 +5,7 @@ import de.ShadowX202.shadowAPI.command.interfaces.CommandExecutor;
 import de.ShadowX202.shadowAPI.command.interfaces.ShadowAPICommand;
 import de.ShadowX202.shadowAPI.command.interfaces.argument.Argument;
 import de.ShadowX202.shadowAPI.command.interfaces.argument.Flag;
+import org.bukkit.command.CommandSender;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -105,7 +106,7 @@ public class ShadowAPICommandBuilder implements de.ShadowX202.shadowAPI.command.
             }
 
             @Override
-            public List<String> tab(@Nullable @org.jetbrains.annotations.Nullable String[] args, @org.jetbrains.annotations.Nullable Integer index) {
+            public List<String> tab(@Nullable List<String> args) {
                 return List.of(new String[]{name});
             }
         };

@@ -28,21 +28,15 @@ public class TabParser extends Parser{
         return null;
     }
 
-    public List<Tabable> parseTab(ShadowAPICommand command, String[] args) {
-        List<Tabable> result = new ArrayList<Tabable>();
+    public List<String> parseTab(ShadowAPICommand command, String[] args) {
+        List<String> result = new ArrayList<String>();
 
         String[] quoted = this.mergeQuotedArguments(args, true);
 
-        int index = 0;
-        if(quoted.length >= 1){
-            index = quoted.length - 1;
-            if(quoted[quoted.length - 1].isBlank()){
-                index++;
+        if(!command.getCommands().isEmpty() && quoted.length == 1) {
+            for(ShadowAPICommand command2: command.getCommands()){
+                result.add(command2.getName());
             }
-        }
-
-        if(!command.getCommands().isEmpty() && quoted.length <= 1) {
-            result.addAll(command.getCommands());
         }
         if(!command.getCommands().isEmpty() && quoted.length > 1) {
             for(ShadowAPICommand command2: command.getCommands()) {
@@ -52,42 +46,35 @@ public class TabParser extends Parser{
             }
         }
 
-        Argument arg = null;
-        if(command.getArguments().size() > index){
-            arg = command.getArguments().get(index);
-            Argument finalArg = arg;
-            result.add((strings, integer) -> List.of(new String[]{finalArg.getName()}));
-            result.add(arg);
-            int i = index;
-            while(arg.isOptional() && i < quoted.length){
-                arg = command.getArguments().get(i++);
-                Argument finalArg2 = arg;
-                result.add((strings, integer) -> List.of(new String[]{finalArg2.getName()}));;
-                result.add(arg);
-            }
+        List<ArgumentValue> argumentValues = this.getArgumentValues(command, quoted);
+        int index = argumentValues.size();
+        if(index < command.getArguments().size()) {
+            Argument argument = command.getArguments().get(index);
+            result.addAll(argument.tab(argumentValues.get(index).getValues()));
+            if(!argument.isOptional()) return result;
         }
 
-        if(arg == null || arg.isOptional()){
-            Flag activeFlag = activeFlag(command, quoted);
-            if(activeFlag == null){
-                for(Flag flag : command.getFlags()){
-                    if(result.contains(flag)){}
 
-                    result.add((unusedArgs, unusedIndex) -> {
-                        List<String> flagResult = new ArrayList<>();
-                        flagResult.add("--"+flag.getName());
-                        List<String> aliases = flag.getAliases();
-                        for(String alias: aliases){
-                            flagResult.add("-"+alias);
-                        }
-                        return flagResult;
-                    });
-
+        if(!argumentValues.isEmpty()){
+            ArgumentValue argumentValue = argumentValues.get(index-1);
+            Argument argument = argumentValue.getArgument();
+            if(argument instanceof Flag<?>){
+                Flag flag = (Flag<?>)argument;
+                List<String> flagTab = flag.tab(argumentValue.getValues());
+                if(!flagTab.isEmpty()){
+                    result.addAll(flagTab);
+                    return result;
                 }
-            }else{
-                result.add(activeFlag);
-            }
+            };
 
+        }
+
+        for(Flag flag: command.getFlags()){
+            result.add("--"+flag.getName());
+            List<String> aliases = flag.getAliases();
+            for(String alias: aliases){
+                result.add("-"+alias);
+            }
         }
 
         return result;

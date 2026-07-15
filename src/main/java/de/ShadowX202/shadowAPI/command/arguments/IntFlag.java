@@ -2,6 +2,7 @@ package de.ShadowX202.shadowAPI.command.arguments;
 
 import de.ShadowX202.shadowAPI.command.exception.ParseArgumentException;
 import de.ShadowX202.shadowAPI.command.interfaces.argument.Flag;
+import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.Nullable;
 
@@ -55,13 +56,13 @@ public class IntFlag implements Flag<Integer> {
     }
 
     @Override
-    public Integer parse(String[] args, @org.jetbrains.annotations.Nullable Integer index) throws ParseArgumentException {
-        if(index == null) {
+    public Integer parse(@org.jetbrains.annotations.Nullable List<String> args) throws ParseArgumentException {
+        if(args == null  || args.size() == 0) {
             return this.defaultValue;
         }
         Integer num;
         try{
-            num = Integer.parseInt(args[index]);
+            num = Integer.parseInt(args.get(0));
         }catch(NumberFormatException e){
             throw new ParseArgumentException("Argument " + getName() + " is invalid");
         }
@@ -75,10 +76,16 @@ public class IntFlag implements Flag<Integer> {
     }
 
     @Override
-    public List<String> tab(@Nullable @org.jetbrains.annotations.Nullable String[] args, @org.jetbrains.annotations.Nullable Integer index) {
+    public List<String> tab(@Nullable @org.jetbrains.annotations.Nullable List<String> args) {
         List<String> list = new ArrayList<>();
+        if(args.size() > 1) return list;
         if(this.min != null) list.add(this.min.toString());
         if(this.max != null) list.add(this.max.toString());
+        if(args.size() != 1) return list;
+        try{
+            Integer num = Integer.parseInt(args.get(0));
+            list.add(num.toString());
+        }catch(NumberFormatException e){}
         return list;
     }
 }
