@@ -15,11 +15,9 @@ public class MissingArgumentException extends RuntimeException {
     private static String returnType(Argument argument) {
         String type = "Unknown";
         try {
-            Method m = argument.getClass().getMethod("parse");
+            Method m = argument.getClass().getMethod("parse", String[].class);
             type = m.getReturnType().getName();
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
+        } catch (NoSuchMethodException e) {}
         return type;
     }
 }
