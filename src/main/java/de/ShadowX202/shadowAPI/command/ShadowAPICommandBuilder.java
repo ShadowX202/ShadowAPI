@@ -67,11 +67,11 @@ public class ShadowAPICommandBuilder implements de.ShadowX202.shadowAPI.command.
     public ShadowAPICommand build() {
 
         if(name == null || name.isEmpty()) {
-            throw new MissingArgumentException("Name cannot be null or empty");
+            throw new RuntimeException("Name cannot be null or empty");
         }
 
         if(commandExecutor == null) {
-            throw new MissingArgumentException("CommandExecutor cannot be null");
+            throw new RuntimeException("CommandExecutor cannot be null");
         }
 
         return new ShadowAPICommand() {

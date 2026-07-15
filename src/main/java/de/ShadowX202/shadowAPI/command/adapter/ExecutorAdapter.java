@@ -1,6 +1,7 @@
 package de.ShadowX202.shadowAPI.command.adapter;
 
 import de.ShadowX202.shadowAPI.command.CommandContext;
+import de.ShadowX202.shadowAPI.command.exception.MissingArgumentException;
 import de.ShadowX202.shadowAPI.command.exception.ParseArgumentException;
 import de.ShadowX202.shadowAPI.command.interfaces.ShadowAPICommand;
 import de.ShadowX202.shadowAPI.command.interfaces.argument.Argument;
@@ -51,9 +52,9 @@ public class ExecutorAdapter implements CommandExecutor {
         Parsed parsed;
         try{
             parsed = parser.parse(command, strings);
-        }catch (ParseArgumentException e){
+        }catch (ParseArgumentException | MissingArgumentException e){
             commandSender.sendMessage("§c"+e.getMessage());
-            return true;
+            return false;
         }
 
         return executeCommand(command, commandSender, parsed);

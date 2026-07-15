@@ -45,9 +45,12 @@ public class OfflinePlayerFlag implements Flag<OfflinePlayer> {
     @Override
     public OfflinePlayer parse(@Nullable List<String> args) throws ParseArgumentException {
         if(args == null){
-            throw new ParseArgumentException("No name provided");
+            throw new ParseArgumentException("No player name provided");
         }
-        return Bukkit.getOfflinePlayer(name);
+        if(args.isEmpty()){
+            throw new ParseArgumentException("No player name provided");
+        }
+        return Bukkit.getOfflinePlayer(args.get(0));
     }
 
     @Override

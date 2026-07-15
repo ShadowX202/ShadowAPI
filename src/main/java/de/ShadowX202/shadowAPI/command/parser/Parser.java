@@ -171,7 +171,7 @@ public class Parser {
                 continue;
             }
             if(!argument.isOptional()) {
-                throw new MissingArgumentException("Missing argument: " + argument.getName());
+                throw new MissingArgumentException(argument);
             }
             argumentValues.add(new ArgumentValue(argument).notUsed());
         }
