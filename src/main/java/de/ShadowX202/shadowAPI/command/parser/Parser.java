@@ -39,6 +39,14 @@ public class Parser {
         }
     }
 
+    public Flag getFlag(ShadowAPICommand command, String flagStr) {
+        for(Flag flag : command.getFlags()) {
+            if(matchFlag(flagStr, flag))
+                return flag;
+        }
+        return null;
+    }
+
     public List<ArgumentValue> getArgumentValues(ShadowAPICommand command, String[] args){
         List<ArgumentValue> values = new ArrayList<>();
         ArgumentValue flag = null;
@@ -47,23 +55,21 @@ public class Parser {
             String arg = args[i];
             Argument argument = null;
 
+            Flag isFlag = getFlag(command, arg);
+
             if(i < command.getArguments().size()){
                 argument = command.getArguments().get(i);
-                if(!(argument.isOptional() && arg.startsWith("-"))){
+                if(!(argument.isOptional() && isFlag != null)){
                     values.add(new ArgumentValue(argument).addValue(arg));
                     continue;
                 }
             }
 
-            if(arg.startsWith("-")){
-                for(Flag f: command.getFlags()){
-                    if(matchFlag(arg, f)){
-                        if(flag != null){
-                            values.add(flag);
-                        }
-                        flag = new ArgumentValue(f);
-                    }
+            if(isFlag != null){
+                if(flag != null){
+                    values.add(flag);
                 }
+                flag = new ArgumentValue(isFlag);
             }else if(flag != null){
                 flag.addValue(arg);
             }

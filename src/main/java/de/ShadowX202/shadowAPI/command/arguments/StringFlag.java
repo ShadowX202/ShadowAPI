@@ -58,11 +58,11 @@ public class StringFlag implements Flag<String> {
 
     @Override
     public List<String> tab(@Nullable List<String> args) {
-        if(args.size() == 0) return List.of();
-        String input = args.get(args.size() - 1);
+        if(args.isEmpty()) return List.of();
+        String input = args.getLast();
         if(input.isBlank()) {
             return List.of();
         }
-        return List.of(new String[]{input});
+        return List.of();
     }
 }

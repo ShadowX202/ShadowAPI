@@ -56,14 +56,17 @@ public class TabParser extends Parser{
 
 
         if(!argumentValues.isEmpty()){
-            ArgumentValue argumentValue = argumentValues.get(index-1);
+            ArgumentValue argumentValue = argumentValues.getLast();
             Argument argument = argumentValue.getArgument();
             if(argument instanceof Flag<?>){
                 Flag flag = (Flag<?>)argument;
-                List<String> flagTab = flag.tab(argumentValue.getValues());
-                if(!flagTab.isEmpty() && (argumentValue.getValues().isEmpty() || !argumentValue.getValues().getLast().startsWith("-"))){
-                    result.addAll(flagTab);
-                    return result;
+                List<String> values = argumentValue.getValues();
+                List<String> flagTab = flag.tab(values);
+                if(!flagTab.isEmpty()){
+                    if(values.isEmpty() || !values.getLast().startsWith("-") ){
+                        result.addAll(flagTab);
+                        return result;
+                    }
                 }
             };
 

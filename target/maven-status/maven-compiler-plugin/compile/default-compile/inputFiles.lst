@@ -1,6 +1,8 @@
 C:\Users\aaron\IdeaProjects\ShadowAPI\src\main\java\de\ShadowX202\shadowAPI\command\adapter\ExecutorAdapter.java
 C:\Users\aaron\IdeaProjects\ShadowAPI\src\main\java\de\ShadowX202\shadowAPI\command\adapter\TabCompleteAdapter.java
 C:\Users\aaron\IdeaProjects\ShadowAPI\src\main\java\de\ShadowX202\shadowAPI\command\arguments\IntFlag.java
+C:\Users\aaron\IdeaProjects\ShadowAPI\src\main\java\de\ShadowX202\shadowAPI\command\arguments\OfflinePlayerFlag.java
+C:\Users\aaron\IdeaProjects\ShadowAPI\src\main\java\de\ShadowX202\shadowAPI\command\arguments\OfflinePlayersFlag.java
 C:\Users\aaron\IdeaProjects\ShadowAPI\src\main\java\de\ShadowX202\shadowAPI\command\arguments\StringFlag.java
 C:\Users\aaron\IdeaProjects\ShadowAPI\src\main\java\de\ShadowX202\shadowAPI\command\CommandContext.java
 C:\Users\aaron\IdeaProjects\ShadowAPI\src\main\java\de\ShadowX202\shadowAPI\command\CommandManager.java
