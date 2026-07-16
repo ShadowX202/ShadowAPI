@@ -54,8 +54,7 @@ public class Menu {
         buttons.put(slot, button);
         return this;
     }
-
-    @Override
+    
     public void show(Player user) {
         Inventory inventory = createInventory();
         user.openInventory(inventory);
