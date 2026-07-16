@@ -5,7 +5,6 @@ de\ShadowX202\shadowAPI\command\interfaces\CommandManager.class
 de\ShadowX202\shadowAPI\command\adapter\ExecutorAdapter.class
 de\ShadowX202\shadowAPI\command\ShadowAPICommandBuilder$1.class
 de\ShadowX202\shadowAPI\command\parser\Parsed.class
-de\ShadowX202\shadowAPI\ui\interfaces\UI.class
 de\ShadowX202\shadowAPI\command\ShadowAPICommandBuilder.class
 de\ShadowX202\shadowAPI\command\interfaces\argument\Tabable.class
 de\ShadowX202\shadowAPI\command\arguments\IntFlag.class
@@ -18,6 +17,7 @@ de\ShadowX202\shadowAPI\ShadowAPI.class
 de\ShadowX202\shadowAPI\command\exception\MissingArgumentException.class
 de\ShadowX202\shadowAPI\command\CommandContext.class
 de\ShadowX202\shadowAPI\ShadowAPI$1.class
+de\ShadowX202\shadowAPI\ui\OpenMenu.class
 de\ShadowX202\shadowAPI\command\CommandManager.class
 de\ShadowX202\shadowAPI\command\interfaces\ShadowAPICommandBuilder.class
 de\ShadowX202\shadowAPI\ui\Menu$InventorySize.class

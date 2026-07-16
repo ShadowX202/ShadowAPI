@@ -5,6 +5,7 @@ import de.ShadowX202.shadowAPI.command.ShadowAPICommandBuilder;
 import de.ShadowX202.shadowAPI.command.arguments.IntFlag;
 import de.ShadowX202.shadowAPI.command.arguments.StringFlag;
 import de.ShadowX202.shadowAPI.ui.Menu;
+import de.ShadowX202.shadowAPI.ui.OpenMenu;
 import de.ShadowX202.shadowAPI.ui.interfaces.Button;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -67,7 +68,7 @@ public final class ShadowAPI extends JavaPlugin {
         Menu menu = new Menu("Menu", Menu.InventorySize.LARGE);
         menu.setButton(0, new Button() {
             @Override
-            public void onClick(Player user, Menu menu, ClickType clickType) {
+            public void onClick(Player user, OpenMenu menu, ClickType clickType) {
                 user.sendMessage("Hi");
             }
 

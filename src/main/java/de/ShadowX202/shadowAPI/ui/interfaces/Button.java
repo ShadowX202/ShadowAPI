@@ -8,9 +8,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 public interface Button {
-    interface Update{
-        void update();
-    }
     void onClick(Player user, OpenMenu menu, ClickType clickType);
     ItemStack getItem();
 }
