@@ -15,21 +15,22 @@ import org.bukkit.inventory.InventoryHolder;
 
 public class MenuInteraction implements Listener {
 
-    private final Menu menu;
-    private final Inventory inventory;
+    private final OpenMenu menu;
 
-    public MenuInteraction(Menu menu, Inventory inventory) {
+    public MenuInteraction(OpenMenu menu) {
         this.menu = menu;
-        this.inventory = inventory;
     }
 
     @EventHandler(ignoreCancelled = true)
     public void interaction(InventoryClickEvent event) {
+        Inventory inventory = this.menu.getInventory();
+        Menu menu = this.menu.getMenu();
+
         Inventory inv = event.getView().getTopInventory();
         Inventory invBottom = event.getView().getBottomInventory();
-        if(inv != this.inventory && invBottom != this.inventory ) return;
+        if(inv != inventory && invBottom != inventory ) return;
         event.setCancelled(true);
-        if(inv != this.inventory) return;
+        if(inv != inventory) return;
 
         ClickType clickType = event.getClick();
         int slot = event.getSlot();
@@ -40,13 +41,13 @@ public class MenuInteraction implements Listener {
         if(!(human instanceof Player)) return;
 
         Player player = (Player) human;
-        but.onClick(player, menu, clickType);
+        but.onClick(player, this.menu, clickType);
     }
 
 
     @EventHandler(ignoreCancelled = true)
     public void closeInventory(InventoryCloseEvent event) {
-        if(event.getInventory() != this.inventory) return;
+        if(event.getInventory() != this.menu.getInventory()) return;
         HandlerList.unregisterAll(this);
     }
 }

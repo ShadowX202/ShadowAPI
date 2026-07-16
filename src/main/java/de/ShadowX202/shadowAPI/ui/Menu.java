@@ -5,6 +5,7 @@ import de.ShadowX202.shadowAPI.ui.interfaces.Button;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,11 +39,16 @@ public class Menu {
         this.buttons = new HashMap<>();
     }
 
-    protected Inventory createInventory(){
-        Inventory inventory = Bukkit.createInventory(null, size.getSize(), title);
+    public void updateInventory(Inventory inventory) {
+        inventory.clear();
         for(Map.Entry<Integer, Button> entry : buttons.entrySet()){
             inventory.setItem(entry.getKey(), entry.getValue().getItem());
         }
+    }
+
+    protected Inventory createInventory(){
+        Inventory inventory = Bukkit.createInventory(null, size.getSize(), title);
+        updateInventory(inventory);
         return inventory;
     }
 
@@ -54,10 +60,13 @@ public class Menu {
         buttons.put(slot, button);
         return this;
     }
-    
-    public void show(Player user) {
+
+    public OpenMenu show(Player user) {
         Inventory inventory = createInventory();
-        user.openInventory(inventory);
-        Bukkit.getServer().getPluginManager().registerEvents(new MenuInteraction(this, inventory), Manager.getPlugin());
+        InventoryView view = user.openInventory(inventory);
+        OpenMenu openMenu = new OpenMenu(this, inventory, view);
+
+        Bukkit.getServer().getPluginManager().registerEvents(new MenuInteraction(openMenu), Manager.getPlugin());
+        return openMenu;
     }
 }
