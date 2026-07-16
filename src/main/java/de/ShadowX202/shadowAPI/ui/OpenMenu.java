@@ -23,4 +23,7 @@ public class OpenMenu {
     public InventoryView getView() {
         return view;
     }
+    public void update(){
+        menu.setInventory(inventory);
+    }
 }

@@ -39,7 +39,7 @@ public class Menu {
         this.buttons = new HashMap<>();
     }
 
-    public void updateInventory(Inventory inventory) {
+    public void setInventory(Inventory inventory) {
         inventory.clear();
         for(Map.Entry<Integer, Button> entry : buttons.entrySet()){
             inventory.setItem(entry.getKey(), entry.getValue().getItem());
@@ -48,7 +48,7 @@ public class Menu {
 
     protected Inventory createInventory(){
         Inventory inventory = Bukkit.createInventory(null, size.getSize(), title);
-        updateInventory(inventory);
+        setInventory(inventory);
         return inventory;
     }
 
