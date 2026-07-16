@@ -10,3 +10,5 @@ commands:
       - e
   broadcast:
     usage: /broadcast send --message <string>
+  menu:
+    usage: /menu

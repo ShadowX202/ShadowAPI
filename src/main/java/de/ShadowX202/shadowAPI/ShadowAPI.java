@@ -4,7 +4,13 @@ import de.ShadowX202.shadowAPI.command.CommandManager;
 import de.ShadowX202.shadowAPI.command.ShadowAPICommandBuilder;
 import de.ShadowX202.shadowAPI.command.arguments.IntFlag;
 import de.ShadowX202.shadowAPI.command.arguments.StringFlag;
+import de.ShadowX202.shadowAPI.ui.Menu;
+import de.ShadowX202.shadowAPI.ui.interfaces.Button;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 
@@ -17,7 +23,8 @@ public final class ShadowAPI extends JavaPlugin {
     @Override
     public void onEnable() {
         this.instance = this;
-        CommandManager cm = new CommandManager(this);
+        Manager.setPlugin(this);
+        CommandManager cm = new CommandManager();
         cm.registerCommand(
                 new ShadowAPICommandBuilder()
                         .name("echo")
@@ -57,6 +64,29 @@ public final class ShadowAPI extends JavaPlugin {
                         .build()
         );
 
+        Menu menu = new Menu("Menu", Menu.InventorySize.LARGE);
+        menu.setButton(0, new Button() {
+            @Override
+            public void onClick(Player user, Menu menu, ClickType clickType) {
+                user.sendMessage("Hi");
+            }
+
+            @Override
+            public ItemStack getItem() {
+                return new ItemStack(Material.EMERALD);
+            }
+        });
+
+        cm.registerCommand(
+                new ShadowAPICommandBuilder()
+                        .name("menu")
+                        .executor((ctx) -> {
+                            if(!ctx.isPlayer()) return false;
+                            menu.show(ctx.getPlayer());
+                            return true;
+                        })
+                        .build()
+        );
     }
 
     @Override

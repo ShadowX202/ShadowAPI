@@ -1,5 +1,6 @@
 package de.ShadowX202.shadowAPI.command;
 
+import de.ShadowX202.shadowAPI.Manager;
 import de.ShadowX202.shadowAPI.command.adapter.ExecutorAdapter;
 import de.ShadowX202.shadowAPI.command.adapter.TabCompleteAdapter;
 import de.ShadowX202.shadowAPI.command.interfaces.ShadowAPICommand;
@@ -15,9 +16,9 @@ public class CommandManager implements de.ShadowX202.shadowAPI.command.interface
     private static CommandManager instance;
     private JavaPlugin plugin;
 
-    public CommandManager(JavaPlugin plugin) {
+    public CommandManager() {
         this.commands = new HashSet<>();
-        this.plugin = plugin;
+        this.plugin = Manager.getPlugin();
     }
 
     @Override
